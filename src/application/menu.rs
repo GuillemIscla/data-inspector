@@ -1,23 +1,25 @@
 
-use crate::{application::action::Action, domain::watch::Watch};
+use crate::{application::action::Action, domain::WatchBuilder};
 use dialoguer::{theme::ColorfulTheme, Select};
 pub enum MenuItem {
     Menu(Menu),
-    Watch(Box<dyn Watch>),
+    Watch(Box<dyn WatchBuilder>),
 }
 
 impl MenuItem {
     fn get_label(&self) -> String {
         match self {
             MenuItem::Menu(menu) => menu.label.clone(),
-            MenuItem::Watch(watch) => watch.label(),
+            MenuItem::Watch(watch_builder) => watch_builder.label(),
         }
     }
 
     fn to_action(&self) -> Action {
         match self {
-            MenuItem::Menu(menu) => Action::DisplayMenu(menu),
-            MenuItem::Watch(watch) => Action::DisplayWatch(watch),
+            MenuItem::Menu(menu) => Action::DisplayMenu(&menu),
+            MenuItem::Watch(watch_builder) => {
+                Action::DisplayWatch(dyn_clone::clone_box(&**watch_builder))
+            },
         }
     }
 }

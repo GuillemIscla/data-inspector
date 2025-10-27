@@ -1,8 +1,8 @@
-use crate::{application::menu::Menu, domain::Watch};
+use crate::{application::menu::Menu, domain::WatchBuilder};
 
-pub enum Action<'a> {
-    DisplayMenu(&'a Menu),
-    DisplayWatch(&'a Box<dyn Watch>),
-    Up,
-    Exit,
+pub enum Action<'a> { 
+    DisplayMenu(&'a Menu), 
+    DisplayWatch(Box<dyn WatchBuilder>), 
+    Up, 
+    Exit, 
 }

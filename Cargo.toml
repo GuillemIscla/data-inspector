@@ -4,8 +4,14 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+anyhow = "1"
+async-trait = "0.1"
+chrono = "0.4"
 clap = { version = "4.5", features = ["derive"] }
 colored = "2"
 dialoguer = "0.11"
+dotenvy = "0.15"
+dyn-clone = "1"
+sqlx = { version = "0.7", features = ["runtime-tokio", "postgres", "uuid", "chrono"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "io-util", "io-std" ] }
 uuid = { version = "1", features = ["v4"] }
