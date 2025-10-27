@@ -4,11 +4,14 @@ use tokio::time::{self, Duration};
 use std::io::Write;
 use colored::*;
 
-use crate::application::action::Action;
+use crate::{
+    application::action::Action,
+    infra::string_constants::*
+};
 
 pub trait Watch {
-    fn title(&self) -> String;
-    fn label(&self) -> String;
+    fn title(&self) -> &str;
+    fn label(&self) -> &str;
     fn watch(&self);
 }
 
@@ -21,29 +24,29 @@ pub async fn display_watch(watch: &Box<dyn Watch>) -> Action {
     loop {
         select! {
             _ = ticker.tick() => {
-                print!("\r\x1b[2K");
+                print!("{}", FLUSH_LINE);
                 let msg = format!("Refreshing watch: {}. To finish enter 'Up' or 'Exit'", watch.title());
                 println!("{}", &msg.green().bold());
                 watch.watch();
-                print!("cmd> ");
-                std::io::stdout().flush().unwrap();
+                print!("{}", CMD_PROMPT);
+                std::io::stdout().flush().expect("Failed flushing the prompts");
             }
             line = lines.next_line() => {
                 match line {
                     Ok(Some(line)) => {
-                        let line = line.trim().to_string();
-                        if line.eq_ignore_ascii_case("exit") {
+                        let line = line.trim();
+                        if line.eq_ignore_ascii_case(EXIT) {
                             action = Action::Exit;
                             break;
-                        } else if line.eq_ignore_ascii_case("up") {
+                        } else if line.eq_ignore_ascii_case(UP) {
                             action = Action::Up;
                             break;
                         }
                         else {
-                            print!("cmd> ");
+                            print!("{}", CMD_PROMPT);
                         }
                         
-                        std::io::stdout().flush().unwrap();
+                        std::io::stdout().flush().expect("Failed flushing the prompts");
                     }
                     Ok(None) => break,
                     Err(e) => {

@@ -12,12 +12,12 @@ pub struct SampleWatch {
 }
 
 impl Watch for SampleWatch {
-    fn label(&self) -> String {
-        "Sample Watch".to_string()
+    fn label(&self) -> &str {
+        "Sample Watch"
     }
     
-    fn title(&self) -> String {
-        "Sample watch".to_string()
+    fn title(&self) -> &str {
+        "Sample watch"
     }
     
     fn watch(&self) {

@@ -2,6 +2,7 @@ use crate::{application::{action::Action, sample::sample_menu::get_menu}, domain
 
 pub mod application;
 pub mod domain;
+pub mod infra;
 
 #[tokio::main]
 async fn main() {

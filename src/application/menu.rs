@@ -10,11 +10,11 @@ impl MenuItem {
     fn get_label(&self) -> String {
         match self {
             MenuItem::Menu(menu) => menu.label.clone(),
-            MenuItem::Watch(watch) => watch.label(),
+            MenuItem::Watch(watch) => watch.label().to_string(),
         }
     }
 
-    fn to_action(&self) -> Action {
+    fn create_action(&self) -> Action {
         match self {
             MenuItem::Menu(menu) => Action::DisplayMenu(menu),
             MenuItem::Watch(watch) => Action::DisplayWatch(watch),
@@ -67,7 +67,7 @@ impl Menu {
             Action::Exit
         }
         else {
-            self.items[selection].to_action()
+            self.items[selection].create_action()
         }
     }
 }
