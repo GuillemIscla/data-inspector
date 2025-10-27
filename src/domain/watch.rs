@@ -7,7 +7,11 @@ use uuid::Uuid;
 use std::io::Write;
 use tokio::select;
 use tokio::time::{self, Duration};
-use crate::application::action::Action;
+
+use crate::{
+    application::action::Action,
+    infra::string_constants::*
+};
 
 #[async_trait]
 pub trait WatchBuilder: DynClone  {
@@ -18,9 +22,8 @@ dyn_clone::clone_trait_object!(WatchBuilder);
 
 #[async_trait]
 pub trait Watch {
-    fn title(&self) -> String;
-    fn label(&self) -> String;
-    fn input(&self) -> String;
+    fn title(&self) -> &str;
+    fn label(&self) -> &str;
     async fn watch(&self, since_ms:u32) -> Result<String>;
 }
 
@@ -33,33 +36,32 @@ pub async fn display_watch(watch: Box<dyn Watch>) -> Action<'static> {
     loop {
         select! {
             _ = ticker.tick() => {
-                print!("\r\x1b[2K");
-                println!("");
-                let msg = format!("Refreshing watch: '{}' with input '{}'. To finish enter 'Up' or 'Exit'.", watch.title(), watch.input());
+                print!("{}", FLUSH_LINE);
+                let msg = format!("Refreshing watch: {}. To finish enter 'Up' or 'Exit'", watch.title());
                 println!("{}", &msg.green().bold());
                 match watch.watch(100000000).await {
                     Ok(result) => println!("{}", result),
                     Err(error) => println!("An error occurred: '{}'", error),
                 }
-                print!("cmd> ");
-                std::io::stdout().flush().unwrap();
+                print!("{}", CMD_PROMPT);
+                std::io::stdout().flush().expect("Failed flushing the prompts");
             }
             line = lines.next_line() => {
                 match line {
                     Ok(Some(line)) => {
-                        let line = line.trim().to_string();
-                        if line.eq_ignore_ascii_case("exit") {
+                        let line = line.trim();
+                        if line.eq_ignore_ascii_case(EXIT) {
                             action = Action::Exit;
                             break;
-                        } else if line.eq_ignore_ascii_case("up") {
+                        } else if line.eq_ignore_ascii_case(UP) {
                             action = Action::Up;
                             break;
                         }
                         else {
-                            print!("cmd> ");
+                            print!("{}", CMD_PROMPT);
                         }
                         
-                        std::io::stdout().flush().unwrap();
+                        std::io::stdout().flush().expect("Failed flushing the prompts");
                     }
                     Ok(None) => break,
                     Err(e) => {

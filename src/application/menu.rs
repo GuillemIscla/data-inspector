@@ -10,11 +10,11 @@ impl MenuItem {
     fn get_label(&self) -> String {
         match self {
             MenuItem::Menu(menu) => menu.label.clone(),
-            MenuItem::Watch(watch_builder) => watch_builder.label(),
+            MenuItem::Watch(watch) => watch.label().to_string(),
         }
     }
 
-    fn to_action(&self) -> Action {
+    fn create_action(&self) -> Action<'_> {
         match self {
             MenuItem::Menu(menu) => Action::DisplayMenu(&menu),
             MenuItem::Watch(watch_builder) => {
@@ -42,7 +42,7 @@ impl Menu {
         }
     }
 
-    pub async fn display(&self, is_main:bool) -> Action {
+    pub async fn display(&self, is_main:bool) -> Action<'_> {
         let theme = ColorfulTheme::default();
         let mut options = self.items.iter().enumerate()
                                     .map(|(index, menu_item)| format!("{}. {}", index + 1, menu_item.get_label()))
@@ -69,7 +69,7 @@ impl Menu {
             Action::Exit
         }
         else {
-            self.items[selection].to_action()
+            self.items[selection].create_action()
         }
     }
 }

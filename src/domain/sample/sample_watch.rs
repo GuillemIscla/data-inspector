@@ -27,16 +27,12 @@ impl SampleWatch {
 
 #[async_trait]
 impl Watch for SampleWatch {
-    fn label(&self) -> String {
-        "Sample Watch".to_string()
+    fn label(&self) -> &str {
+        "Sample Watch"
     }
     
-    fn title(&self) -> String {
-        "Sample watch".to_string()
-    }
-
-    fn input(&self) -> String {
-        format!("{}", self.input)
+    fn title(&self) -> &str {
+        "Sample watch"
     }
 
     async fn watch(&self, since_ms:u32) -> Result<String> {
