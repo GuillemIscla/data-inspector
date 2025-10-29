@@ -96,6 +96,8 @@ pub async fn prompt_bucket_uuid(input_label:&str) -> tokio::io::Result<Option<Uu
 
         let trimmed = line.trim();
         if trimmed.is_empty() {
+            let msg = format!("Accepting 'empty data' as input").blue().bold();
+            println!("{}", msg);
             return Ok(None);
         }
 
